@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Rohzah Consulting | Elite Insurance Advisory</title>
+    <!-- Tailwind CSS for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            scroll-behavior: smooth;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .font-serif {
+            font-family: 'Playfair Display', serif;
+        }
+        .page-section {
+            display: none;
+            animation: fadeIn 0.4s ease-out;
+        }
+        .page-section.active {
+            display: block;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        /* Mobile Menu Transitions */
+        .mobile-menu {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            opacity: 0;
+            pointer-events: none;
+            transform: translateY(-10px);
+            visibility: hidden;
+        }
+        .mobile-menu.open {
+            opacity: 1;
+            pointer-events: auto;
+            transform: translateY(0);
+            visibility: visible;
+        }
+        /* Selection Highlight */
+        .selection-coral::selection {
+            background-color: #e9967a;
+            color: white;
+        }
+        /* Scrollbar styling for time slots */
+        .time-slots-container::-webkit-scrollbar {
+            width: 5px;
+        }
+        .time-slots-container::-webkit-scrollbar-track {
+            background: #faf8f6;
+        }
+        .time-slots-container::-webkit-scrollbar-thumb {
+            background: #e9967a;
+            border-radius: 10px;
+        }
+        /* Ensure inputs don't zoom on iOS */
+        input, select, textarea {
+            font-size: 16px !important;
+        }
+    </style>
+</head>
+<body class="bg-white text-[#4a3f3f] antialiased selection-coral overflow-x-hidden w-full">
+
+    <!-- Navigation -->
+    <nav class="fixed top-0 left-0 w-full z-[100] bg-white/95 backdrop-blur-md border-b border-[#f0eae4] shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16 md:h-20 items-center">
+                <!-- Logo -->
+                <button onclick="navigateTo('home')" class="flex items-center space-x-2 sm:space-x-3 group text-left focus:outline-none">
+                    <div class="w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center bg-[#4a3f3f] group-hover:bg-[#e9967a] transition-colors rounded-sm shadow-md">
+                        <span class="text-white font-serif italic text-lg sm:text-xl font-bold">R</span>
+                    </div>
+                    <div class="flex flex-col">
+                        <span class="text-sm sm:text-lg font-serif tracking-widest uppercase font-black text-[#4a3f3f]">Rohzah</span>
+                        <span class="text-[7px] sm:text-[8px] uppercase tracking-[0.3em] font-bold text-[#e9967a]">Consulting</span>
+                    </div>
+                </button>
+
+                <!-- Desktop Nav -->
+                <div class="hidden md:flex space-x-6 lg:space-x-10 text-[10px] lg:text-[11px] font-bold uppercase tracking-[0.2em]">
+                    <button onclick="navigateTo('home')" class="nav-link border-b-2 border-[#e9967a] text-[#4a3f3f] pb-1 transition-all" data-page="home">home</button>
+                    <button onclick="navigateTo('about')" class="nav-link border-b-2 border-transparent text-[#4a3f3f]/50 hover:text-[#4a3f3f] pb-1 transition-all" data-page="about">about</button>
+                    <button onclick="navigateTo('services')" class="nav-link border-b-2 border-transparent text-[#4a3f3f]/50 hover:text-[#4a3f3f] pb-1 transition-all" data-page="services">services</button>
+                    <button onclick="navigateTo('booking')" class="nav-link border-b-2 border-transparent text-[#4a3f3f]/50 hover:text-[#4a3f3f] pb-1 transition-all" data-page="booking">booking</button>
+                    <button onclick="navigateTo('contact')" class="nav-link border-b-2 border-transparent text-[#4a3f3f]/50 hover:text-[#4a3f3f] pb-1 transition-all" data-page="contact">contact</button>
+                </div>
+
+                <!-- Desktop CTA -->
+                <div class="hidden md:block">
+                    <button class="px-5 py-2.5 border border-[#4a3f3f] text-[#4a3f3f] text-[10px] font-bold uppercase tracking-widest hover:bg-[#4a3f3f] hover:text-white transition-all rounded-sm">
+                        Client Portal
+                    </button>
+                </div>
+
+                <!-- Mobile Menu Button -->
+                <button id="menu-toggle" class="md:hidden p-2 text-[#4a3f3f] focus:outline-none" aria-label="Toggle Menu">
+                    <i data-lucide="menu" id="menu-icon" class="w-6 h-6"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Menu Overlay -->
+        <div id="mobile-menu" class="md:hidden fixed inset-x-0 top-16 bg-white border-b border-[#f0eae4] z-[90] mobile-menu shadow-2xl">
+            <div class="px-6 py-10 space-y-8 flex flex-col items-center text-center">
+                <button onclick="navigateTo('home')" class="text-xl font-serif uppercase tracking-widest text-[#4a3f3f]">home</button>
+                <button onclick="navigateTo('about')" class="text-xl font-serif uppercase tracking-widest text-[#4a3f3f]">about</button>
+                <button onclick="navigateTo('services')" class="text-xl font-serif uppercase tracking-widest text-[#4a3f3f]">services</button>
+                <button onclick="navigateTo('booking')" class="text-xl font-serif uppercase tracking-widest text-[#4a3f3f]">booking</button>
+                <button onclick="navigateTo('contact')" class="text-xl font-serif uppercase tracking-widest text-[#4a3f3f]">contact</button>
+                <div class="pt-6 w-full max-w-xs">
+                    <button class="w-full py-4 bg-[#4a3f3f] text-white font-bold uppercase tracking-widest text-[10px] rounded-sm shadow-lg">
+                        Client Portal
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="w-full pt-16 md:pt-20">
+        <!-- Home Section -->
+        <section id="home" class="page-section active">
+            <div class="relative min-h-[calc(100vh-64px)] md:min-h-[90vh] flex items-center bg-[#faf8f6] px-4 sm:px-6 lg:px-8">
+                <div class="max-w-7xl mx-auto w-full grid md:grid-cols-2 gap-10 lg:gap-24 items-center py-10 md:py-20">
+                    <div class="space-y-6 md:space-y-8 text-center md:text-left">
+                        <div class="inline-flex items-center space-x-3 px-4 py-2 bg-white border border-[#f0eae4] shadow-sm rounded-full">
+                            <i data-lucide="shield-check" class="w-3.5 h-3.5 text-[#e9967a]"></i>
+                            <span class="text-[8px] md:text-[9px] uppercase tracking-[0.2em] font-bold text-[#4a3f3f]/60">Expert Claims Advocacy</span>
+                        </div>
+                        <h1 class="text-4xl sm:text-5xl lg:text-7xl xl:text-8xl font-serif text-[#4a3f3f] leading-[1.1] md:leading-[1.1]">
+                            Elite Insurance <br class="hidden lg:block">
+                            <span class="italic text-[#e9967a]">Advisory</span>
+                        </h1>
+                        <p class="text-sm sm:text-base md:text-lg lg:text-xl text-[#4a3f3f]/70 max-w-md mx-auto md:mx-0 leading-relaxed font-light">
+                            Navigating complex insurance landscapes with over $1,000,000 in claims successfully resolved for our clients.
+                        </p>
+                        <div class="flex flex-col sm:flex-row gap-4 pt-4 justify-center md:justify-start">
+                            <button onclick="navigateTo('booking')" class="w-full sm:w-auto px-8 py-4 bg-[#4a3f3f] text-white text-[10px] font-bold uppercase tracking-widest hover:bg-[#362e2e] transition-all flex items-center justify-center gap-3 shadow-lg rounded-sm">
+                                Book Consultation <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                            </button>
+                            <button onclick="navigateTo('services')" class="w-full sm:w-auto px-8 py-4 bg-white border border-[#f0eae4] text-[#4a3f3f] text-[10px] font-bold uppercase tracking-widest hover:bg-[#faf8f6] transition-all shadow-sm rounded-sm">
+                                View Services
+                            </button>
+                        </div>
+                    </div>
+                    <!-- Stats Card - Hidden on small mobile, visible on tablet+ -->
+                    <div class="hidden sm:block relative">
+                        <div class="relative z-10 aspect-square md:aspect-[4/5] bg-[#e9967a]/5 border border-[#e9967a]/20 rounded-sm p-10 lg:p-16 flex flex-col justify-center text-center shadow-inner">
+                            <i data-lucide="award" class="w-12 h-12 lg:w-16 lg:h-16 text-[#e9967a] mx-auto mb-6"></i>
+                            <h3 class="text-5xl lg:text-7xl font-serif italic mb-2 text-[#4a3f3f]">$1M+</h3>
+                            <p class="text-[9px] lg:text-[10px] uppercase tracking-[0.3em] font-bold text-[#4a3f3f]/40">Claims Value Resolved</p>
+                        </div>
+                        <div class="absolute -bottom-4 -left-4 w-full h-full border border-[#f0eae4] -z-10"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- About Section -->
+        <section id="about" class="page-section">
+            <div class="max-w-7xl mx-auto py-16 md:py-32 px-4 sm:px-6 lg:px-8">
+                <div class="grid lg:grid-cols-12 gap-8 md:gap-16 items-center">
+                    <div class="lg:col-span-5 relative order-2 lg:order-1 mt-10 lg:mt-0">
+                        <div class="bg-[#4a3f3f] aspect-[4/5] flex flex-col justify-between p-8 md:p-16 relative overflow-hidden shadow-2xl rounded-sm">
+                            <span class="absolute -bottom-10 -right-10 text-[10rem] md:text-[20rem] font-serif italic text-white/[0.03] select-none pointer-events-none">R</span>
+                            <div class="relative z-10">
+                                <div class="w-10 h-[1px] bg-[#e9967a] mb-8"></div>
+                                <h2 class="text-4xl md:text-5xl lg:text-6xl font-serif text-white leading-tight">
+                                    The <br><span class="italic text-[#e9967a]">Rohzah</span><br> Standard
+                                </h2>
+                            </div>
+                            <div class="relative z-10">
+                                <p class="text-white/50 text-[9px] uppercase tracking-[0.4em] font-bold">Established 2017</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="lg:col-span-7 lg:pl-10 space-y-8 order-1 lg:order-2">
+                        <div class="space-y-6">
+                            <span class="text-[10px] uppercase tracking-[0.4em] font-bold text-[#e9967a]">The Professional Advocate</span>
+                            <h3 class="text-3xl md:text-5xl font-serif text-[#4a3f3f] leading-snug">
+                                More than an advisor. <br class="hidden sm:block">
+                                <span class="italic">Your technical ally.</span>
+                            </h3>
+                            <p class="text-base md:text-lg text-[#4a3f3f]/70 font-light leading-relaxed">
+                                Insurance isn't just a policy—it's a high-stakes legal contract. My mission is to ensure that contract is upheld to the letter. We bridge the gap between policyholders and carriers with surgical precision.
+                            </p>
+                        </div>
+                        <div class="pt-4">
+                            <button onclick="navigateTo('contact')" class="inline-flex items-center space-x-4 text-[10px] font-bold uppercase tracking-[0.3em] text-[#4a3f3f] group focus:outline-none">
+                                <span class="border-b-2 border-[#e9967a] pb-2 group-hover:pr-4 transition-all">Get in Touch</span>
+                                <i data-lucide="arrow-right" class="w-4 h-4 text-[#e9967a]"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Services Section -->
+        <section id="services" class="page-section">
+            <div class="max-w-7xl mx-auto py-16 md:py-32 px-4 sm:px-6 lg:px-8">
+                <div class="text-center mb-16 md:mb-24">
+                    <span class="text-[10px] uppercase tracking-[0.4em] font-bold text-[#e9967a]">Advisory Suite</span>
+                    <h2 class="text-3xl md:text-5xl font-serif mt-4 text-[#4a3f3f]">Professional Services</h2>
+                </div>
+                <div class="grid sm:grid-cols-2 lg:grid-cols-2 gap-6 lg:gap-10 max-w-5xl mx-auto">
+                    <!-- Service Card 1 -->
+                    <div class="bg-white border border-[#f0eae4] p-8 lg:p-12 hover:shadow-xl transition-all group flex flex-col rounded-sm">
+                        <div class="text-[#e9967a] mb-6"><i data-lucide="clock" class="w-7 h-7"></i></div>
+                        <h3 class="text-xl lg:text-2xl font-serif mb-4 text-[#4a3f3f]">Essential Coverage</h3>
+                        <p class="text-[#4a3f3f]/60 text-sm lg:text-base mb-10 flex-grow">Guidance for policyholders before making changes or shopping for new policies. We evaluate gaps in your current strategy.</p>
+                        <div class="flex items-center justify-between pt-6 border-t border-[#f0eae4]">
+                            <div>
+                                <p class="text-[9px] uppercase font-bold text-[#e9967a]">45 Mins</p>
+                                <p class="text-xl lg:text-2xl font-serif italic text-[#4a3f3f]">$125</p>
+                            </div>
+                            <button onclick="navigateTo('booking')" class="p-3 bg-[#faf8f6] group-hover:bg-[#e9967a] group-hover:text-white transition-all rounded-full focus:outline-none">
+                                <i data-lucide="arrow-right" class="w-5 h-5"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Service Card 2 -->
+                    <div class="bg-white border border-[#f0eae4] p-8 lg:p-12 hover:shadow-xl transition-all group flex flex-col rounded-sm">
+                        <div class="text-[#e9967a] mb-6"><i data-lucide="shield-alert" class="w-7 h-7"></i></div>
+                        <h3 class="text-xl lg:text-2xl font-serif mb-4 text-[#4a3f3f]">Claims Support</h3>
+                        <p class="text-[#4a3f3f]/60 text-sm lg:text-base mb-10 flex-grow">Strategic guidance for complex claims and technical policy language clarity to ensure you receive your full entitlement.</p>
+                        <div class="flex items-center justify-between pt-6 border-t border-[#f0eae4]">
+                            <div>
+                                <p class="text-[9px] uppercase font-bold text-[#e9967a]">Case Review</p>
+                                <p class="text-xl lg:text-2xl font-serif italic text-[#4a3f3f]">$175</p>
+                            </div>
+                            <button onclick="navigateTo('booking')" class="p-3 bg-[#faf8f6] group-hover:bg-[#e9967a] group-hover:text-white transition-all rounded-full focus:outline-none">
+                                <i data-lucide="arrow-right" class="w-5 h-5"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Booking Section -->
+        <section id="booking" class="page-section">
+            <div class="max-w-5xl mx-auto py-12 md:py-24 px-4 sm:px-6 lg:px-8">
+                <div class="bg-white border border-[#f0eae4] shadow-2xl p-6 sm:p-10 lg:p-16 rounded-sm">
+                    <div class="text-center mb-10">
+                        <span class="text-[10px] uppercase tracking-[0.4em] font-bold text-[#e9967a]">Availability</span>
+                        <h2 class="text-3xl md:text-4xl font-serif mt-3 text-[#4a3f3f]">Secure Consultation</h2>
+                        <p class="text-xs text-[#4a3f3f]/50 mt-2 font-medium tracking-wide">Monday – Friday | 9:00 AM – 5:00 PM</p>
+                    </div>
+
+                    <form id="booking-form" class="space-y-8" onsubmit="handleBooking(event)">
+                        <div class="grid lg:grid-cols-2 gap-10">
+                            <!-- Left Column: inputs -->
+                            <div class="space-y-6">
+                                <div class="space-y-2">
+                                    <label class="block text-[10px] uppercase font-bold text-[#4a3f3f]/40 tracking-widest">1. Select Service</label>
+                                    <div class="relative">
+                                        <select required class="w-full bg-[#faf8f6] border border-[#f0eae4] p-4 text-sm focus:border-[#e9967a] focus:ring-1 focus:ring-[#e9967a] outline-none rounded-sm transition-all appearance-none cursor-pointer">
+                                            <option value="" disabled selected>Choose a service...</option>
+                                            <option>Essential Coverage ($125)</option>
+                                            <option>Claims Support ($175)</option>
+                                            <option>Forensic Review ($250)</option>
+                                            <option>Public Adjusting (Contingency)</option>
+                                        </select>
+                                        <div class="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-[#e9967a]">
+                                            <i data-lucide="chevron-down" class="w-4 h-4"></i>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="space-y-2">
+                                    <label class="block text-[10px] uppercase font-bold text-[#4a3f3f]/40 tracking-widest">2. Select Date</label>
+                                    <input type="date" id="booking-date" required onchange="handleDateChange(this.value)" class="w-full bg-[#faf8f6] border border-[#f0eae4] p-4 text-sm focus:border-[#e9967a] focus:ring-1 focus:ring-[#e9967a] outline-none rounded-sm transition-all cursor-pointer block">
+                                    <p id="date-error" class="text-[10px] text-red-500 hidden pt-1 font-medium italic">Consultations are available Monday through Friday only.</p>
+                                </div>
+                            </div>
+
+                            <!-- Right Column: Time Grid -->
+                            <div class="space-y-4">
+                                <label class="block text-[10px] uppercase font-bold text-[#4a3f3f]/40 tracking-widest">3. Select Time Slot</label>
+                                <div id="time-slots-placeholder" class="h-48 md:h-full min-h-[160px] flex items-center justify-center border border-dashed border-[#f0eae4] rounded-sm bg-[#faf8f6]/50 p-6 text-center">
+                                    <p class="text-[10px] uppercase tracking-widest text-[#4a3f3f]/30 leading-relaxed">Please select a valid weekday date to view available times</p>
+                                </div>
+                                <div id="time-slots-grid" class="hidden h-56 lg:h-64 overflow-y-auto grid grid-cols-2 sm:grid-cols-3 gap-2 pr-2 time-slots-container">
+                                    <!-- Slots injected by JS -->
+                                </div>
+                                <input type="hidden" id="selected-time" required>
+                            </div>
+                        </div>
+
+                        <div class="pt-10 border-t border-[#f0eae4]">
+                            <button type="submit" class="w-full py-5 bg-[#4a3f3f] text-white text-[10px] font-bold uppercase tracking-widest shadow-xl hover:bg-[#362e2e] transition-all disabled:opacity-30 disabled:cursor-not-allowed rounded-sm active:scale-[0.98]" id="submit-btn">
+                                Confirm & Proceed to Payment
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact Section -->
+        <section id="contact" class="page-section">
+            <div class="max-w-7xl mx-auto py-16 md:py-32 px-4 sm:px-6 lg:px-8">
+                <div class="grid md:grid-cols-2 gap-12 lg:gap-24 items-center">
+                    <div class="space-y-8">
+                        <h2 class="text-4xl md:text-6xl font-serif text-[#4a3f3f]">Reach the <span class="italic">Concierge</span></h2>
+                        <div class="space-y-6">
+                            <div class="flex items-center gap-5 group">
+                                <div class="w-12 h-12 bg-[#faf8f6] flex items-center justify-center rounded-full text-[#e9967a] border border-[#f0eae4] group-hover:bg-[#e9967a] group-hover:text-white transition-all">
+                                    <i data-lucide="mail" class="w-5 h-5"></i>
+                                </div>
+                                <div>
+                                    <p class="text-[10px] uppercase opacity-40 font-bold tracking-widest">Direct Email</p>
+                                    <a href="mailto:malaysia.dorsey@rohzahconsulting.com" class="text-base sm:text-lg font-serif italic text-[#4a3f3f] hover:text-[#e9967a] transition-colors">malaysia.dorsey@rohzahconsulting.com</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-[#faf8f6] p-8 md:p-12 rounded-sm border border-[#f0eae4]">
+                        <h4 class="font-serif text-2xl mb-4 italic">Response Time</h4>
+                        <p class="text-sm text-[#4a3f3f]/70 leading-relaxed">Our advisory team typically responds to initial inquiries within 2-4 business hours. For urgent claim emergencies, please indicate "URGENT" in your booking notes.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Success Modal -->
+    <div id="success-modal" class="fixed inset-0 z-[200] flex items-center justify-center bg-[#261e1e]/80 backdrop-blur-md hidden px-4">
+        <div class="bg-white p-8 sm:p-12 max-w-sm w-full text-center space-y-6 rounded-sm shadow-2xl relative">
+            <div class="w-16 h-16 bg-[#e9967a]/10 text-[#e9967a] flex items-center justify-center rounded-full mx-auto">
+                <i data-lucide="check-circle" class="w-8 h-8"></i>
+            </div>
+            <h3 class="text-2xl font-serif text-[#4a3f3f]">Booking Initialized</h3>
+            <p class="text-sm text-[#4a3f3f]/60 leading-relaxed italic font-light">Your request has been logged. You will be redirected to the secure payment portal shortly to finalize your slot.</p>
+            <button onclick="closeModal()" class="w-full py-4 bg-[#4a3f3f] text-white text-[10px] font-bold uppercase tracking-widest hover:bg-[#362e2e] transition-all rounded-sm">Close</button>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-[#261e1e] text-white pt-20 pb-10 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-7xl mx-auto">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-10 pb-16">
+                <div>
+                    <div class="flex items-center space-x-3 mb-6">
+                        <div class="w-8 h-8 flex items-center justify-center bg-white text-[#261e1e] rounded-sm">
+                            <span class="font-serif italic font-bold">R</span>
+                        </div>
+                        <span class="text-lg font-serif tracking-widest uppercase">Rohzah</span>
+                    </div>
+                    <p class="text-white/40 text-sm max-w-xs leading-relaxed">The premier insurance advisory for technical policy advocacy and claims resolution.</p>
+                </div>
+                <div class="md:text-right">
+                    <p class="text-white/40 text-[10px] uppercase tracking-widest font-bold mb-4">Social Presence</p>
+                    <div class="flex md:justify-end space-x-6">
+                        <a href="#" class="hover:text-[#e9967a] transition-colors"><i data-lucide="linkedin" class="w-5 h-5"></i></a>
+                        <a href="#" class="hover:text-[#e9967a] transition-colors"><i data-lucide="instagram" class="w-5 h-5"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="border-t border-white/5 pt-10 flex flex-col md:flex-row justify-between items-center gap-4 text-[9px] text-white/20 font-bold uppercase tracking-[0.3em]">
+                <p>&copy; 2024 Rohzah Consulting. All Rights Reserved.</p>
+                <div class="flex space-x-6">
+                    <a href="#" class="hover:text-white transition-colors">Privacy Policy</a>
+                    <a href="#" class="hover:text-white transition-colors">Terms of Service</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Set min date for booking to tomorrow to prevent same-day chaos
+        const dateInput = document.getElementById('booking-date');
+        const tomorrow = new Date();
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        dateInput.setAttribute('min', tomorrow.toISOString().split('T')[0]);
+
+        // Page Navigation Logic
+        function navigateTo(pageId) {
+            document.querySelectorAll('.page-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            const activeSection = document.getElementById(pageId);
+            if (activeSection) {
+                activeSection.classList.add('active');
+            }
+
+            // Update Nav Links UI
+            document.querySelectorAll('.nav-link').forEach(link => {
+                if (link.getAttribute('data-page') === pageId) {
+                    link.classList.add('border-[#e9967a]', 'text-[#4a3f3f]');
+                    link.classList.remove('border-transparent', 'text-[#4a3f3f]/50');
+                } else {
+                    link.classList.remove('border-[#e9967a]', 'text-[#4a3f3f]');
+                    link.classList.add('border-transparent', 'text-[#4a3f3f]/50');
+                }
+            });
+
+            closeMobileMenu();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Time Slot Logic
+        function handleDateChange(dateString) {
+            const date = new Date(dateString);
+            // date.getUTCDay() avoids timezone shifting issues with date inputs
+            const day = date.getUTCDay(); 
+            const grid = document.getElementById('time-slots-grid');
+            const placeholder = document.getElementById('time-slots-placeholder');
+            const error = document.getElementById('date-error');
+            const submitBtn = document.getElementById('submit-btn');
+
+            // Reset selection
+            document.getElementById('selected-time').value = '';
+
+            // 0 is Sunday, 6 is Saturday
+            if (day === 0 || day === 6) {
+                grid.classList.add('hidden');
+                placeholder.classList.remove('hidden');
+                error.classList.remove('hidden');
+                submitBtn.disabled = true;
+            } else {
+                grid.classList.remove('hidden');
+                placeholder.classList.add('hidden');
+                error.classList.add('hidden');
+                submitBtn.disabled = false;
+                generateTimeSlots();
+            }
+        }
+
+        function generateTimeSlots() {
+            const grid = document.getElementById('time-slots-grid');
+            grid.innerHTML = '';
+            
+            const times = [
+                "9:00 AM", "10:00 AM", "11:00 AM", "12:00 PM", 
+                "1:00 PM", "2:00 PM", "3:00 PM", "4:00 PM", "5:00 PM"
+            ];
+
+            times.forEach(time => {
+                const btn = document.createElement('button');
+                btn.type = "button";
+                btn.className = "time-slot-btn py-4 px-2 border border-[#f0eae4] bg-[#faf8f6] text-[10px] font-bold text-[#4a3f3f] hover:border-[#e9967a] hover:bg-[#e9967a]/5 transition-all rounded-sm uppercase tracking-tighter focus:outline-none flex items-center justify-center";
+                btn.innerText = time;
+                btn.onclick = () => selectTime(btn, time);
+                grid.appendChild(btn);
+            });
+        }
+
+        function selectTime(element, time) {
+            document.querySelectorAll('.time-slot-btn').forEach(btn => {
+                btn.classList.remove('bg-[#4a3f3f]', 'text-white', 'border-[#4a3f3f]');
+                btn.classList.add('bg-[#faf8f6]', 'text-[#4a3f3f]', 'border-[#f0eae4]');
+            });
+            element.classList.remove('bg-[#faf8f6]', 'text-[#4a3f3f]', 'border-[#f0eae4]');
+            element.classList.add('bg-[#4a3f3f]', 'text-white', 'border-[#4a3f3f]');
+            document.getElementById('selected-time').value = time;
+        }
+
+        function handleBooking(e) {
+            e.preventDefault();
+            const time = document.getElementById('selected-time').value;
+            if (!time) {
+                // Use custom logic instead of window.alert for cleaner UI
+                const timeLabel = document.querySelector('label[for="selected-time"]') || { innerText: "a time slot" };
+                alert("Please select a time slot before confirming.");
+                return;
+            }
+            document.getElementById('success-modal').classList.remove('hidden');
+            document.body.style.overflow = 'hidden'; // Prevent scroll when modal is open
+        }
+
+        function closeModal() {
+            document.getElementById('success-modal').classList.add('hidden');
+            document.body.style.overflow = 'auto';
+        }
+
+        // Mobile Menu Toggle
+        const menuToggle = document.getElementById('menu-toggle');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const menuIcon = document.getElementById('menu-icon');
+
+        menuToggle.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const isOpen = mobileMenu.classList.toggle('open');
+            menuIcon.setAttribute('data-lucide', isOpen ? 'x' : 'menu');
+            lucide.createIcons();
+        });
+
+        function closeMobileMenu() {
+            mobileMenu.classList.remove('open');
+            menuIcon.setAttribute('data-lucide', 'menu');
+            lucide.createIcons();
+        }
+
+        // Close menu on resize if switching to desktop
+        window.addEventListener('resize', () => {
+            if (window.innerWidth >= 768) {
+                closeMobileMenu();
+            }
+        });
+
+        // Close menu if clicking outside
+        document.addEventListener('click', (e) => {
+            if (!mobileMenu.contains(e.target) && !menuToggle.contains(e.target)) {
+                closeMobileMenu();
+            }
+        });
+
+        // Initialize Icons
+        lucide.createIcons();
+    </script>
+</body>
+</html>
